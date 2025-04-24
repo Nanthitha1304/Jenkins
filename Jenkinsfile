@@ -10,13 +10,25 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'pip install -r requirements.txt'
+                script {
+                    if (isUnix()) {
+                        sh 'npm install'
+                    } else {
+                        bat 'npm install'
+                    }
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'pytest'
+                script {
+                    if (isUnix()) {
+                        sh 'pytest'
+                    } else {
+                        bat 'pytest'
+                    }
+                }
             }
         }
     }
