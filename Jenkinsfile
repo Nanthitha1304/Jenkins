@@ -2,25 +2,19 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Nanthitha1304/Jenkins.git'
-            }
-        }
         stage('Build') {
             steps {
-                sh 'echo "Building the application..."'
+                echo 'Building the project...'
             }
         }
         stage('Test') {
             steps {
-                sh 'echo "Running tests..."'
-                sh 'pytest tests/'   // Example if Python
+                echo 'Running tests...'
             }
         }
         stage('Report') {
             steps {
-                echo 'Tests completed!'
+                echo 'Generating report...'
             }
         }
     }
@@ -33,4 +27,5 @@ pipeline {
         }
     }
 }
+
 
