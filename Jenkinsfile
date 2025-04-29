@@ -2,34 +2,35 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Nanthitha1304/Jenkins.git'
+                git 'https://github.com/Nanthitha1304/Jenkins.git'
             }
         }
-
-        stage('Install Dependencies') {
+        stage('Build') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'npm install'
-                    } else {
-                        bat 'npm install'
-                    }
-                }
+                sh 'echo "Building the application..."'
             }
         }
-
-        stage('Run Tests') {
+        stage('Test') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'pytest'
-                    } else {
-                        bat 'pytest'
-                    }
-                }
+                sh 'echo "Running tests..."'
+                sh 'pytest tests/'   // Example if Python
+            }
+        }
+        stage('Report') {
+            steps {
+                echo 'Tests completed!'
             }
         }
     }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
 }
+
