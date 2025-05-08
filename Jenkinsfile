@@ -1,31 +1,45 @@
 pipeline {
     agent any
-
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo 'Building the project...'
+                git 'https://github.com/Nanthitha1304/Jenkins.git'
             }
         }
-        stage('Test') {
+        stage('Install Dependencies') {
             steps {
-                echo 'Running tests...'
+                sh 'pip install -r requirements.txt'
             }
         }
-        stage('Report') {
+        stage('Run Tests') {
             steps {
-                echo 'Generating report...'
+                sh 'pytest > test_report.txt'  // Generates a test report
+            }
+        }
+        stage('Run Flask App') {
+            steps {
+                sh 'nohup python -m flask run --host=0.0.0.0 --port=8000 &'
+            }
+        }
+        stage('Open in Browser') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'xdg-open http://localhost:8000'
+                    } else {
+                        bat 'start http://localhost:8000'
+                    }
+                }
             }
         }
     }
     post {
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed!'
+        always {
+            archiveArtifacts artifacts: 'test_report.txt', allowEmptyArchive: true
+            echo 'Pipeline completed.'
         }
     }
 }
+
 
 
