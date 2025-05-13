@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PYTHON = '/usr/bin/python3'  // Make sure to adjust if necessary
+        PYTHON = '/usr/bin/python3'  // Adjust this path if necessary for your environment
         PIP = '/usr/bin/pip3'        // Ensure pip3 is installed
     }
     stages {
@@ -16,9 +16,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Ensure pip is installed and dependencies are installed using pip3
-                    sh 'which python3'   // Verify python3 path
-                    sh 'which pip3'      // Verify pip3 path
+                    // Verify python3 and pip3 paths
+                    sh 'which python3'   // Check if Python 3 is installed
+                    sh 'which pip3'      // Check if pip3 is installed
+                    sh 'python3 --version'  // Check Python version
+                    sh 'pip3 --version'     // Check pip version
                     sh 'pip3 install -r requirements.txt'  // Use pip3 for installation
                 }
             }
@@ -34,7 +36,7 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 script {
-                    // Run Flask app in the background, no need for `nohup`
+                    // Run Flask app in the background
                     sh 'python3 -m flask run --host=0.0.0.0 --port=8000 &'
                 }
             }
@@ -45,13 +47,6 @@ pipeline {
                     // Opening a browser on Jenkins server might not be possible.
                     // Commenting it for now as Jenkins does not have a graphical interface
                     echo 'Flask App is running on http://localhost:8000'
-                    // If you want to open it on a local machine, run it outside of Jenkins
-                    // Example for local testing:
-                    // if (isUnix()) {
-                    //     sh 'xdg-open http://localhost:8000'
-                    // } else {
-                    //     bat 'start http://localhost:8000'
-                    // }
                 }
             }
         }
