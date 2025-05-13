@@ -6,20 +6,17 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Nanthitha1304/Jenkins.git'
             }
         }
-       stage('Install Dependencies') {
-    stage('Install Dependencies') {
-    steps {
-        script {
-            if (isUnix()) {
-                sh 'install_dependencies.sh'  // Shell command for Unix
-            } else {
-                bat 'install_dependencies.bat'  // Batch command for Windows
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'install_dependencies.sh'  // Shell command for Unix
+                    } else {
+                        bat 'install_dependencies.bat'  // Batch command for Windows
+                    }
+                }
             }
         }
-    }
-}
-
-
         stage('Run Tests') {
             steps {
                 sh '. venv/bin/activate && pytest > test_report.txt'  // Runs tests and saves results in test_report.txt
