@@ -8,20 +8,12 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-<<<<<<< HEAD
                 sh 'pip install -r requirements.txt' 
-=======
-                sh 'pip install -r requirements.txt'
->>>>>>> d10d6e11673bc04f5f435a8562822b0a1888e692
             }
         }
         stage('Run Tests') {
             steps {
-<<<<<<< HEAD
                 sh 'pytest > test_report.txt'  // Runs tests and saves results in test_report.txt
-=======
-                sh 'pytest > test_report.txt'  // Generates a test report
->>>>>>> d10d6e11673bc04f5f435a8562822b0a1888e692
             }
         }
         stage('Run Flask App') {
@@ -48,7 +40,3 @@ pipeline {
         }
     }
 }
-
-
-
-    
