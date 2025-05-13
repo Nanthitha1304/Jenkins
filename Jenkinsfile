@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10' // Use the latest stable Python version
-        }
-    }
+    agent any
     stages {
         stage('Checkout') {
             steps {
@@ -12,7 +8,11 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt' 
+                sh '''
+                    python3 --version || sudo apt-get install python3 -y
+                    pip3 --version || sudo apt-get install python3-pip -y
+                    pip3 install -r requirements.txt
+                '''
             }
         }
         stage('Run Tests') {
@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Run Flask App') {
             steps {
-                sh 'nohup python -m flask run --host=0.0.0.0 --port=8000 &'
+                sh 'nohup python3 -m flask run --host=0.0.0.0 --port=8000 &'
             }
         }
         stage('Open in Browser') {
