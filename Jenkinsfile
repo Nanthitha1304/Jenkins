@@ -1,59 +1,48 @@
 pipeline {
-    agent any
-    environment {
-        PYTHON = '/usr/bin/python3'  // Adjust this path if necessary for your environment
-        PIP = '/usr/bin/pip3'        // Ensure pip3 is installed
+    agent {
+        docker {
+            image 'python:3.9' // Using Python 3.9 Docker image
+            args '-u root'     // Run as root inside the container
+        }
     }
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    // Ensure you have the correct repository and branch
-                    git branch: 'main', url: 'https://github.com/Nanthitha1304/Jenkins.git'
-                }
+                git branch: 'main', url: 'https://github.com/Nanthitha1304/Jenkins.git'
             }
         }
         stage('Install Dependencies') {
             steps {
-                script {
-                    // Verify python3 and pip3 paths
-                    sh 'which python3'   // Check if Python 3 is installed
-                    sh 'which pip3'      // Check if pip3 is installed
-                    sh 'python3 --version'  // Check Python version
-                    sh 'pip3 --version'     // Check pip version
-                    sh 'pip3 install -r requirements.txt'  // Use pip3 for installation
-                }
+                sh '''
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
         stage('Run Tests') {
             steps {
-                script {
-                    // Run the tests and capture the output in the test_report.txt file
-                    sh 'pytest > test_report.txt'
-                }
+                sh 'pytest > test_report.txt' 
             }
         }
         stage('Run Flask App') {
             steps {
-                script {
-                    // Run Flask app in the background
-                    sh 'python3 -m flask run --host=0.0.0.0 --port=8000 &'
-                }
+                sh 'nohup python -m flask run --host=0.0.0.0 --port=8000 &'
             }
         }
         stage('Open in Browser') {
             steps {
                 script {
-                    // Opening a browser on Jenkins server might not be possible.
-                    // Commenting it for now as Jenkins does not have a graphical interface
-                    echo 'Flask App is running on http://localhost:8000'
+                    if (isUnix()) {
+                        sh 'xdg-open http://localhost:8000 || echo "Cannot open in UNIX environment"'
+                    } else {
+                        bat 'start http://localhost:8000'
+                    }
                 }
             }
         }
     }
     post {
         always {
-            // Archive test results regardless of the pipeline status
             archiveArtifacts artifacts: 'test_report.txt', allowEmptyArchive: true
             echo 'Pipeline completed.'
         }
