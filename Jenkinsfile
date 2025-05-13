@@ -7,14 +7,18 @@ pipeline {
             }
         }
        stage('Install Dependencies') {
+    stage('Install Dependencies') {
     steps {
-        bat '''
-        python -m venv venv
-        venv\\Scripts\\activate
-        pip install -r requirements.txt
-        '''
+        script {
+            if (isUnix()) {
+                sh 'install_dependencies.sh'  // Shell command for Unix
+            } else {
+                bat 'install_dependencies.bat'  // Batch command for Windows
+            }
+        }
     }
 }
+
 
         stage('Run Tests') {
             steps {
