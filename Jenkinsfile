@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Run Flask App') {
             steps {
-                sh 'nohup python -m flask run --host=0.0.0.0 --port=8000 || true'
+                sh 'nohup python -m flask run --host=0.0.0.0 --port=8000'
             }
         }
         stage('Open in Browser') {
