@@ -6,13 +6,16 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Nanthitha1304/Jenkins.git'
             }
         }
-        stage('Install Dependencies') {
-            steps {
-                sh 'python3 -m venv venv'
-                sh '. venv/bin/activate'
-                sh 'pip install -r requirements.txt' 
-            }
-        }
+       stage('Install Dependencies') {
+    steps {
+        bat '''
+        python -m venv venv
+        venv\\Scripts\\activate
+        pip install -r requirements.txt
+        '''
+    }
+}
+
         stage('Run Tests') {
             steps {
                 sh '. venv/bin/activate && pytest > test_report.txt'  // Runs tests and saves results in test_report.txt
