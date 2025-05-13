@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9' // Using Python 3.9 Docker image
-            args '-u root'     // Run as root inside the container
-        }
-    }
+    agent any
     stages {
         stage('Checkout') {
             steps {
@@ -13,27 +8,26 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh '''
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
+                sh 'python3 -m venv venv'
+                sh '. venv/bin/activate'
+                sh 'pip install -r requirements.txt' 
             }
         }
         stage('Run Tests') {
             steps {
-                sh 'pytest > test_report.txt' 
+                sh '. venv/bin/activate && pytest > test_report.txt'  // Runs tests and saves results in test_report.txt
             }
         }
         stage('Run Flask App') {
             steps {
-                sh 'nohup python -m flask run --host=0.0.0.0 --port=8000 &'
+                sh '. venv/bin/activate && nohup python -m flask run --host=0.0.0.0 --port=8000 &'
             }
         }
         stage('Open in Browser') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'xdg-open http://localhost:8000 || echo "Cannot open in UNIX environment"'
+                        sh 'xdg-open http://localhost:8000'
                     } else {
                         bat 'start http://localhost:8000'
                     }
